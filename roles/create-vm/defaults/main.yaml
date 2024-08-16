@@ -1,0 +1,20 @@
+libvirt_uri: qemu:///system
+
+vm_name: stackable-adds-test
+vm_memory_mib: 4096
+vm_vcpus: 8
+vm_disk_name: stackable-adds-test.qcow2
+vm_disk_pool: default
+vm_disk_size_gib: 30
+vm_disk_format: qcow2
+vm_disk_path: /var/lib/libvirt/images/stackable-adds-test.qcow2
+
+install_iso_windows: /mnt/data/DL/OS/Windows Server 2022 EVAL.iso
+
+install_iso_virtio_win_url: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.248-1/virtio-win-0.1.248.iso
+install_iso_virtio_win_checksum: sha256:d5b5739cf297f0538d263e30678d5a09bba470a7c6bcbd8dff74e44153f16549
+install_iso_virtio_win: "{{ lookup('first_found', 'target') }}/virtio-win.iso"
+
+install_exe_spice_guest_tools_url: https://www.spice-space.org/download/windows/spice-guest-tools/spice-guest-tools-0.141/spice-guest-tools-0.141.exe
+install_exe_spice_guest_tools_checksum: sha256:b5be0754802bcd7f7fe0ccdb877f8a6224ba13a2af7d84eb087a89b3b0237da2
+install_exe_spice_guest_tools: "{{ lookup('first_found', 'guest-files') }}/spice-guest-tools.exe"

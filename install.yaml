@@ -1,0 +1,22 @@
+- name: Create VM and install Windows
+  hosts: localhost
+  roles:
+    - role: create-vm
+- name: Wait for VM to install and boot
+  hosts: sble-addc
+  gather_facts: false
+  tasks:
+    - name: |
+        Wait for VM to install and boot.
+        Make sure to connect to the VM (via virt-manager, virt-viewer, or similar) and follow the prompts (press any key to boot from DVD, confirm partitioning).
+        This will take a while.. if it times out, restart the playbook but leave the VM running to resume.
+        It is normal to see a bunch of QEMU guest agent errors in the Ansible output while waiting.
+      ansible.builtin.wait_for_connection:
+- name: Install AD and initialize domain controller
+  hosts: sble-addc
+  roles:
+    - role: ad-dc
+- name: Connect Kubernetes To AD
+  hosts: localhost
+  roles:
+    - role: connect-k8s

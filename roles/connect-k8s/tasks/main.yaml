@@ -1,0 +1,74 @@
+- name: Export Current CoreDNS Corefile
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: ConfigMap
+    namespace: kube-system
+    name: coredns
+  register: corefile
+- name: Export Current Corefile
+  ansible.builtin.copy:
+    dest: target/Corefile
+    content: "{{ corefile.resources[0].data.Corefile }}"
+- name: Delegate AD Domain To AD
+  ansible.builtin.lineinfile:
+    path: target/Corefile
+    search_string: "forward {{ hostvars['sble-addc'].ansible_facts.domain }}. "
+    line: "    forward {{ hostvars['sble-addc'].ansible_facts.domain }}. {{ hostvars['sble-addc'].vm_network_ipv4 }}"
+    insertbefore: "forward . "
+- name: Update Corefile
+  kubernetes.core.k8s:
+    resource_definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: kube-system
+        name: coredns
+      data:
+        Corefile: "{{ lookup('file', 'target/Corefile') }}"
+
+- name: Update Secret-Operator Credentials
+  kubernetes.core.k8s:
+    resource_definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        namespace: default
+        name: secret-operator-ad-credentials
+      data:
+        ca.crt: "{{ lookup('file', 'target/ca.crt') | b64encode }}"
+        keytab: "{{ lookup('file', 'target/secret-op.kt') | b64encode }}"
+- name: Update Secret-Operator Password Cache
+  kubernetes.core.k8s:
+    resource_definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        namespace: default
+        name: secret-operator-ad-passwords
+- name: Create Kerberos SecretClass
+  kubernetes.core.k8s:
+    resource_definition:
+      apiVersion: secrets.stackable.tech/v1alpha1
+      kind: SecretClass
+      metadata:
+        name: kerberos-ad
+      spec:
+        backend:
+          kerberosKeytab:
+            realmName: "{{ hostvars['sble-addc'].ansible_facts.domain | upper }}"
+            kdc: "{{ hostvars['sble-addc'].ansible_facts.fqdn }}"
+            adminPrincipal: "{{ hostvars['sble-addc'].secret_operator_principal }}"
+            adminKeytabSecret:
+              namespace: default
+              name: secret-operator-ad-credentials
+            admin:
+              activeDirectory:
+                ldapServer: "{{ hostvars['sble-addc'].ansible_facts.fqdn }}"
+                ldapTlsCaSecret:
+                  namespace: default
+                  name: secret-operator-ad-credentials
+                passwordCacheSecret:
+                  namespace: default
+                  name: secret-operator-ad-passwords
+                userDistinguishedName: CN=Users,DC=sble,DC=test
+                schemaDistinguishedName: CN=Schema,CN=Configuration,DC=sble,DC=test

@@ -1,0 +1,6 @@
+.DS_Store
+.idea
+*.log
+tmp/
+/target
+roles/create-vm/files/guest-files/spice-guest-tools.exe

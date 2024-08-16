@@ -1,0 +1,67 @@
+# - name: Install AD DS
+#   win_command: Install-WindowsFeature -name AD-Domain-Services -IncludeManagementTools
+- name: Promote to Domain Controller
+  microsoft.ad.domain:
+    dns_domain_name: sble.test
+    domain_netbios_name: sbletest
+    safe_mode_password: Asdf1234
+    reboot: true
+
+- name: Update Facts With Domain Membership
+  ansible.builtin.gather_facts:
+- name: Extract Primary IP address
+  set_fact:
+    vm_network_ipv4: "{{ (ansible_facts.interfaces | rekey_on_member('macaddress'))[vm_network_mac | upper].ipv4.address }}"
+
+- name: Name Secret-Operator User
+  set_fact:
+    secret_operator_principal: stackable-secret-operator@{{ ansible_facts.domain | upper }}
+- name: Create Secret-Operator User
+  microsoft.ad.user:
+    name: stackable-secret-operator
+    sam_account_name: sble-sec-op
+    password: Asdf1234
+    enabled: true
+    identity: CN=stackable-secret-operator,CN=Users,DC=sble,DC=test
+    upn: "{{ secret_operator_principal }}"
+    groups:
+      add:
+        - Domain Admins
+- name: Create Secret-Operator Keytab
+  ansible.windows.win_command:
+    cmd: ktpass /princ {{ secret_operator_principal }} /out secret-op.kt +rndPass /ptype KRB5_NT_PRINCIPAL /mapuser {{ secret_operator_principal }} /crypto AES256-SHA1
+- name: Fetch Secret-Operator Keytab
+  ansible.builtin.fetch:
+    src: secret-op.kt
+    dest: target/
+    flat: true
+
+- name: Install AD Certificate Services
+  ansible.windows.win_feature:
+    name:
+      - AD-Certificate
+      - ADCS-Cert-Authority
+    include_management_tools: true
+- name: Install ADCS Certificate Authority
+  ansible.windows.win_shell: |
+    # Try to access certificate authority, should fail
+    # iff it is not installed yet
+    try {
+      Get-CATemplate
+    } catch {
+      Install-AdcsCertificationAuthority -Force
+    }
+- name: Export CA Certificate
+  ansible.windows.win_command:
+    cmd: certutil -f -ca.cert ca.crt
+- name: Fetch CA Certificate
+  ansible.builtin.slurp:
+    src: ca.crt
+  register: ca_crt
+- name: Convert CA Certificate
+  community.crypto.x509_certificate_convert:
+    src_content: "{{ ca_crt.content }}"
+    src_content_base64: true
+    dest_path: target/ca.crt
+    format: pem
+  delegate_to: localhost
