@@ -30,7 +30,6 @@
     <timer name="hypervclock" present="yes"/>
   </clock>
   <devices>
-    <emulator>/usr/bin/qemu-system-x86_64</emulator>
     <disk type="volume" device="disk">
       <driver name="qemu" type="{{ vm_disk_format }}" discard="unmap"/>
       <source pool="{{ vm_disk_pool }}" volume="{{ vm_disk_name }}"/>
