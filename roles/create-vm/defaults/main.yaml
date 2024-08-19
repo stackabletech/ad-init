@@ -7,9 +7,12 @@ vm_disk_name: stackable-adds-test.qcow2
 vm_disk_pool: default
 vm_disk_size_gib: 30
 vm_disk_format: qcow2
-vm_disk_path: /var/lib/libvirt/images/stackable-adds-test.qcow2
 
-install_iso_windows: /mnt/data/DL/OS/Windows Server 2022 EVAL.iso
+vm_network_hostnet_name: stackable-adds-test-hostnet
+vm_network_hostnet_subnet: 192.168.197.0/24
+vm_network_internet_name: default
+
+install_iso_windows: "{{ lookup('first_found', 'target') }}/Windows Server 2022 EVAL.iso"
 
 install_iso_virtio_win_url: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.248-1/virtio-win-0.1.248.iso
 install_iso_virtio_win_checksum: sha256:d5b5739cf297f0538d263e30678d5a09bba470a7c6bcbd8dff74e44153f16549

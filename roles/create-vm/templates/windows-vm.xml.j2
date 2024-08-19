@@ -64,13 +64,15 @@
       <readonly/>
     </disk>
     <controller type="scsi" index="0" model="virtio-scsi"/>
+    <!-- Docker/Kind does not route traffic into libvirt NAT networks properly, so configure a host-only network -->
     <interface type="network">
-      <source network="routed"/>
+      <source network="{{ vm_network_hostnet_name }}"/>
       <model type="virtio"/>
       <alias name="ua-net-hostnet"/>
     </interface>
+    <!-- Routed networks require extra configuration to provide internet access, so provide a NATed secondary network interface instead -->
     <interface type="network">
-      <source network="default"/>
+      <source network="{{ vm_network_internet_name }}"/>
       <model type="virtio"/>
       <alias name="ua-net-internet"/>
     </interface>

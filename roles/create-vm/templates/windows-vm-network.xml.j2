@@ -1,0 +1,13 @@
+<network connections="1">
+  <name>{{ vm_network_hostnet_name }}</name>
+  <forward mode="route"/>
+  <ip
+    address="{{ vm_network_hostnet_subnet | ansible.utils.ipaddr('next_usable') }}"
+    netmask="{{ vm_network_hostnet_subnet | ansible.utils.ipaddr('netmask') }}">
+    <dhcp>
+      <range
+        start="{{ vm_network_hostnet_subnet | ansible.utils.next_nth_usable(2) }}"
+        end="{{ vm_network_hostnet_subnet | ansible.utils.ipaddr('last_usable') }}"/>
+    </dhcp>
+  </ip>
+</network>

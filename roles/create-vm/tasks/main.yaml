@@ -24,6 +24,17 @@
     url: "{{ install_exe_spice_guest_tools_url }}"
     checksum: "{{ install_exe_spice_guest_tools_checksum }}"
 
+- name: Create VM Network
+  community.libvirt.virt_net:
+    name: "{{ vm_network_hostnet_name }}"
+    command: define
+    xml: "{{ lookup('template', 'windows-vm-network.xml.j2') }}"
+    uri: "{{ libvirt_uri }}"
+- name: Start VM Network
+  community.libvirt.virt_net:
+    name: "{{ vm_network_hostnet_name }}"
+    state: active
+    uri: "{{ libvirt_uri }}"
 - name: Create VM
   community.libvirt.virt:
     command: define
