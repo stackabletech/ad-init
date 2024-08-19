@@ -6,6 +6,7 @@
 - name: Find Windows ISO
   ansible.builtin.stat:
     path: "{{ install_iso_windows }}"
+    get_checksum: false
   register: install_iso_windows_stat
 - name: Verify that Windows ISO exists
   ansible.builtin.fail:
