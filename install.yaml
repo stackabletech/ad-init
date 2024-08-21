@@ -1,3 +1,8 @@
+- name: Load Python path override
+  hosts: localhost
+  tasks:
+    - set_fact:
+        ansible_python_interpreter: "{{ lookup('ansible.builtin.env', 'ANSIBLE_PYTHON_INTERPRETER') }}"
 - name: Create VM and install Windows
   hosts: localhost
   roles:

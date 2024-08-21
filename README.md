@@ -27,6 +27,8 @@ It also assumes that the Kubernetes cluster and Windows VM will be running on th
 
 In addition, for a completely unattended installation, the ISO must be patched using cdrtools.
 
+When using Nix, you *need* to run inside `direnv` or `nix-shell` (which will provide Ansible for you). Nixpkgs's regular Ansible is *not* enough.
+
 ## Using it
 
 1. Put your Windows ISO in `target/Windows Server 2022 EVAL.iso` (or modify `install_iso_windows` to point at it)
@@ -34,7 +36,7 @@ In addition, for a completely unattended installation, the ISO must be patched u
 3. Open virt-manager
 4. When the VM appears, open it and answer the "press any key to boot" prompt (reboot the VM if you missed it)
 5. Wait for the playbook to complete
-6. Done!
+    6. Done!
 
 ### Completely unattended (noprompt patch)
 
