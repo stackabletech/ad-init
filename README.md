@@ -22,7 +22,7 @@ It also assumes that the Kubernetes cluster and Windows VM will be running on th
 
 - Libvirt and QEMU
 - Ansible
-- A Windows Server installation ISO (download from https://info.microsoft.com/ww-landing-windows-server-2022.html)
+- A Windows Server installation ISO (download from https://www.microsoft.com/en-us/evalcenter/download-windows-server-2022)
 - A Kubernetes cluster (kind is suggested) running the Stackable Data Platform
 
 In addition, for a completely unattended installation, the ISO must be patched using cdrtools.

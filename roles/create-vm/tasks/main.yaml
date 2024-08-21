@@ -10,7 +10,7 @@
   register: install_iso_windows_stat
 - name: Complain about missing Windows ISO
   ansible.builtin.fail:
-    msg: "Windows ISO could not be found, please download it from https://info.microsoft.com/ww-landing-windows-server-2022.html and put it at {{ install_iso_windows  }} (or modify install_iso_windows to point at the correct path)"
+    msg: "Windows ISO could not be found, please download it from https://www.microsoft.com/en-us/evalcenter/download-windows-server-2022 and put it at {{ install_iso_windows  }} (or modify install_iso_windows to point at the correct path)"
   when: not install_iso_windows_stat.stat.exists
 
 - name: Download virtio-win drivers
