@@ -3,7 +3,13 @@
 
 let
   python = pkgs.python3;
-  extraAnsibleDeps = pypkgs: [ pypkgs.libvirt pypkgs.lxml ];
+  extraAnsibleDeps = pypkgs: [
+    # community.libvirt
+    pypkgs.libvirt pypkgs.lxml
+
+    # kubernetes.core
+    pypkgs.kubernetes
+  ];
 in
 pkgs.mkShell rec {
   # buildInputs = [ pkgs.ansible ];
