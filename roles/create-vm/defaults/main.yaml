@@ -21,13 +21,3 @@ install_iso_virtio_win: "{{ lookup('first_found', 'target') }}/virtio-win.iso"
 install_exe_spice_guest_tools_url: https://www.spice-space.org/download/windows/spice-guest-tools/spice-guest-tools-0.141/spice-guest-tools-0.141.exe
 install_exe_spice_guest_tools_checksum: sha256:b5be0754802bcd7f7fe0ccdb877f8a6224ba13a2af7d84eb087a89b3b0237da2
 install_exe_spice_guest_tools: "{{ lookup('first_found', 'guest-files') }}/spice-guest-tools.exe"
-
-# Some distributions don't ship firmware selection manifests, so we need to
-# provide an override ourselves.
-# vm_firmware_override will be set to the first candidate that exists, if any.
-vm_firmware_override: null
-vm_firmware_override_candidates:
-  # NixOS:
-  # https://github.com/NixOS/nixpkgs/issues/115996, and
-  # https://github.com/NixOS/nixpkgs/issues/318079
-  - /run/libvirt/nix-ovmf/OVMF_CODE.fd

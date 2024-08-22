@@ -25,20 +25,18 @@ It also assumes that the Kubernetes cluster and Windows VM will be running on th
 - A Windows Server installation ISO (download from https://www.microsoft.com/en-us/evalcenter/download-windows-server-2022)
 - A Kubernetes cluster (kind is suggested) running the Stackable Data Platform
 
-In addition, for a completely unattended installation, the ISO must be patched using cdrtools.
-
 When using Nix, you *need* to run inside `direnv` or `nix-shell` (which will provide Ansible for you). Nixpkgs's regular Ansible is *not* enough.
 
 ## Using it
 
 1. Put your Windows ISO in `target/Windows Server 2022 EVAL.iso` (or modify `install_iso_windows` to point at it)
 2. Run `ansible-playbook install.yaml -i inventory.ini`
-3. Open virt-manager
-4. When the VM appears, open it and answer the "press any key to boot" prompt (reboot the VM if you missed it)
-5. Wait for the playbook to complete
-    6. Done!
+3. Wait for the playbook to complete
+4. Done!
 
-### Completely unattended (noprompt patch)
+### Completely unattended on UEFI (noprompt patch)
+
+NOTE: This is mostly a note for any future remigration to UEFI. This patch is not required when using BIOS boot.
 
 The "press any key to boot" prompt can be disabled by patching the Windows ISO, but this requires a slightly manual one-time process as root:
 

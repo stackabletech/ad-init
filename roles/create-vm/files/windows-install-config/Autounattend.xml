@@ -16,38 +16,17 @@
         <Disk wcm:action="add">
           <CreatePartitions>
             <CreatePartition wcm:action="add">
-              <Type>EFI</Type>
-              <Size>200</Size>
-              <Order>1</Order>
-            </CreatePartition>
-            <CreatePartition wcm:action="add">
-              <Type>MSR</Type>
-              <Size>200</Size>
-              <Order>2</Order>
-            </CreatePartition>
-            <CreatePartition wcm:action="add">
               <Type>Primary</Type>
-              <!-- Will be extended to the full rest of the disk in ModifyPartition -->
-              <Size>1024</Size>
-              <Order>3</Order>
+              <Extend>true</Extend>
+              <Order>1</Order>
             </CreatePartition>
           </CreatePartitions>
           <ModifyPartitions>
             <ModifyPartition wcm:action="add">
               <Order>1</Order>
               <PartitionID>1</PartitionID>
-              <Format>FAT32</Format>
-            </ModifyPartition>
-            <ModifyPartition wcm:action="add">
-              <Order>2</Order>
-              <PartitionID>2</PartitionID>
-              <!-- MSR partition is managed by Windows, and cannot be formatted manually -->
-            </ModifyPartition>
-            <ModifyPartition wcm:action="add">
-              <Order>3</Order>
-              <PartitionID>3</PartitionID>
               <Format>NTFS</Format>
-              <Extend>true</Extend>
+              <Active>true</Active>
               <Letter>C</Letter>
             </ModifyPartition>
           </ModifyPartitions>
