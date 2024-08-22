@@ -50,6 +50,30 @@ rmdir tmp
 
 After this, `install_iso_windows` can be pointed at `windows-2k22-noprompt.iso` instead to fully automate the process. `ansible-playbook install.yaml -i inventory.ini` should then be enough.
 
+### Running against a preinstalled Windows (such as cloud images)
+
+Generally, a preinstalled Windows can be connected to by setting `ansible_connection=ssh` in `inventory.ini`, for example:
+
+```
+sble-addc ansible_connection=ssh ansible_host=1.2.3.4 vm_network_ipv4=1.2.3.4
+```
+
+Where `ansible_host` is the IP address that will be connected to, and `vm_network_ipv4` is the address that can be used to connect to the Windows host from the Kubernetes cluster.
+
+*However*, requires SSH to be enabled manually, and for Ansible to have valid SSH authentication credentials to connect.
+
+SSH can be enabled by running the following PowerShell on the Windows target:
+
+``` powershell
+Add-WindowsCapability -Online -Name OpenSSH.Server
+Start-Service sshd
+Set-Service -Name sshd -StartupType 'Automatic'
+```
+
+Credentials can be provided to Ansible by adding the `-u USERNAME --ask-pass` flags. Alternatively, you can install your public SSH key to the server instead of using password authentication.
+
+Finally, Kubernetes must still be able to connect to the Windows's LDAP, DNS, and Kerberos services. When running in a cloud environment, this typically means running Kubernetes in the same VPC as the Windows VM.
+
 ## Troubleshooting
 
 ### LDAP error: connection reset by peer

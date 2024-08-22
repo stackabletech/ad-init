@@ -12,6 +12,7 @@
 - name: Extract Primary IP address
   set_fact:
     vm_network_ipv4: "{{ (ansible_facts.interfaces | rekey_on_member('macaddress'))[vm_network_mac | upper].ipv4.address }}"
+  when: not vm_network_ipv4 | default
 
 - name: Name Secret-Operator User
   set_fact:

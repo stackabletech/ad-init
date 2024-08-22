@@ -7,6 +7,8 @@
   hosts: localhost
   roles:
     - role: create-vm
+      # If using a non-libvirt connection, assume that Windows is already installed
+      when: hostvars['sble-addc'].ansible_connection == 'community.libvirt.libvirt_qemu'
 - name: Wait for VM to install and boot
   hosts: sble-addc
   gather_facts: false
@@ -17,6 +19,8 @@
         This will take a while.. if it times out, restart the playbook but leave the VM running to resume.
         It is normal to see a bunch of QEMU guest agent errors in the Ansible output while waiting.
       ansible.builtin.wait_for_connection:
+      # When using a preinstalled Windows, assume that any such initialization is already done.
+      when: hostvars['sble-addc'].ansible_connection == 'community.libvirt.libvirt_qemu'
 - name: Install AD and initialize domain controller
   hosts: sble-addc
   roles:
