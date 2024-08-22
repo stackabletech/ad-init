@@ -15,6 +15,10 @@ pkgs.mkShell rec {
   # buildInputs = [ pkgs.ansible ];
   buildInputs = [ ansible ];
 
+  # Ansible barfs when it doesn't recognize the locale, and may not have *your*
+  # locale available, so...
+  LC_ALL = "C.UTF-8";
+
   # Ansible runs plugins in its own interpreter, so we need to add plugin dependencies to
   # its Python environment
   ansible = python.pkgs.toPythonApplication
