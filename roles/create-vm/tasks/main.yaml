@@ -68,8 +68,6 @@
     command: get_xml
     uri: "{{ libvirt_uri }}"
   register: created_vm
-- debug:
-    var: created_vm
 # VM can have multiple NICs, extract the one we care about so we can match it against the IP address of the guest later
 - name: Extract VM's MAC address
   community.general.xml:

@@ -9,7 +9,7 @@
   ansible.builtin.copy:
     dest: target/Corefile
     content: "{{ corefile.resources[0].data.Corefile }}"
-- name: Delegate AD Domain To AD
+- name: Delegate AD Domain to AD
   ansible.builtin.lineinfile:
     path: target/Corefile
     search_string: "forward {{ hostvars['sble-addc'].ansible_facts.domain }}. "
@@ -21,10 +21,28 @@
       apiVersion: v1
       kind: ConfigMap
       metadata:
-        namespace: kube-system
-        name: coredns
+        namespace: "{{ corefile.resources[0].metadata.namespace }}"
+        name: "{{ corefile.resources[0].metadata.name }}"
       data:
         Corefile: "{{ lookup('file', 'target/Corefile') }}"
+# Some Kubernetes distros (like AKS) prevent you from modifying the Corefile,
+# but provide a separate ConfigMap to edit. So let's provide an override too.
+# modifying the "main" one.
+- name: Update Override Corefile
+  kubernetes.core.k8s:
+    resource_definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: kube-system
+        name: coredns-custom
+      data:
+        sble-addc.server: |
+          {{ hostvars['sble-addc'].ansible_facts.domain }}.:53 {
+              errors
+              reload
+              forward {{ hostvars['sble-addc'].ansible_facts.domain }}. {{ hostvars['sble-addc'].vm_network_ipv4 }}
+          }
 
 - name: Update Secret-Operator Credentials
   kubernetes.core.k8s:
