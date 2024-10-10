@@ -1,0 +1,18 @@
+<network connections="1">
+  <name>{{ vm_network_internet_name }}</name>
+  <forward mode="nat">
+    <nat>
+      <port start='1024' end='65535'/>
+    </nat>
+  </forward>
+  <bridge name='virbr2' stp='on' delay='0'/>
+  <ip
+    address="{{ vm_network_internet_subnet | ansible.utils.ipaddr('next_usable') }}"
+    netmask="{{ vm_network_internet_subnet | ansible.utils.ipaddr('netmask') }}">
+    <dhcp>
+      <range
+        start="{{ vm_network_internet_subnet | ansible.utils.next_nth_usable(2) }}"
+        end="{{ vm_network_internet_subnet | ansible.utils.ipaddr('last_usable') }}"/>
+    </dhcp>
+  </ip>
+</network>
