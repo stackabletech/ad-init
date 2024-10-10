@@ -1,0 +1,14 @@
+---
+apiVersion: kuttl.dev/v1beta1
+kind: TestStep
+commands:
+  - script: envsubst '$NAMESPACE' < kinit-client.yaml | kubectl apply -n $NAMESPACE -f -
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: krb5-client
+spec:
+  ports:
+    - name: bogus
+      port: 9999

@@ -1,11 +1,14 @@
 { sources ? import nix/sources.nix
-, pkgs ? import sources.nixpkgs {} }:
+, pkgs ? import sources.nixpkgs { }
+}:
 
 let
   python = pkgs.python3;
+  beku = pkgs.callPackage (sources."beku.py" + "/beku.nix") { };
   extraAnsibleDeps = pypkgs: [
     # community.libvirt
-    pypkgs.libvirt pypkgs.lxml
+    pypkgs.libvirt
+    pypkgs.lxml
 
     # kubernetes.core
     pypkgs.kubernetes
@@ -13,7 +16,12 @@ let
 in
 pkgs.mkShell rec {
   # buildInputs = [ pkgs.ansible ];
-  buildInputs = [ ansible ];
+  buildInputs = [
+    ansible
+    beku
+    pkgs.kuttl
+    pkgs.gettext # for the proper envsubst
+  ];
 
   # Ansible barfs when it doesn't recognize the locale, and may not have *your*
   # locale available, so...

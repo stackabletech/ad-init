@@ -1,0 +1,16 @@
+---
+dimensions:
+  - name: krb5
+    values:
+      - 1.21.1
+  - name: ad-custom-samaccountname
+    values:
+      - "false"
+      - "true"
+tests:
+  - name: kerberos-ad
+    dimensions:
+      - krb5
+      - ad-custom-samaccountname
+
+suites: []
