@@ -1,4 +1,16 @@
 {
+    "beku.py": {
+        "branch": "main",
+        "description": "Test suite expander for Stackable Kuttl tests.",
+        "homepage": null,
+        "owner": "stackabletech",
+        "repo": "beku.py",
+        "rev": "1ebc9e7b70fb8ee11dfb569ae45b3bcd63666d0e",
+        "sha256": "1zg24h5wdis7cysa08r8vvbw2rpyx6fgv148i1lg54dwd3sa0h0d",
+        "type": "tarball",
+        "url": "https://github.com/stackabletech/beku.py/archive/1ebc9e7b70fb8ee11dfb569ae45b3bcd63666d0e.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "nixpkgs": {
         "branch": "nixos-unstable",
         "description": "Nix Packages collection",

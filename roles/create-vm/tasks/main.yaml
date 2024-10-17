@@ -8,6 +8,7 @@
     path: "{{ install_iso_windows }}"
     get_checksum: false
   register: install_iso_windows_stat
+
 - name: Complain about missing Windows ISO
   ansible.builtin.fail:
     msg: "Windows ISO could not be found, please download it from https://www.microsoft.com/en-us/evalcenter/download-windows-server-2022 and put it at {{ install_iso_windows  }} (or modify install_iso_windows to point at the correct path)"
@@ -18,6 +19,7 @@
     dest: "{{ install_iso_virtio_win }}"
     url: "{{ install_iso_virtio_win_url }}"
     checksum: "{{ install_iso_virtio_win_checksum }}"
+
 - name: Download SPICE guest tools
   ansible.builtin.get_url:
     dest: "{{ install_exe_spice_guest_tools }}"
@@ -30,11 +32,26 @@
     command: define
     xml: "{{ lookup('template', 'windows-vm-network.xml.j2') }}"
     uri: "{{ libvirt_uri }}"
+
 - name: Start VM Network
   community.libvirt.virt_net:
     name: "{{ vm_network_hostnet_name }}"
     state: active
     uri: "{{ libvirt_uri }}"
+
+- name: Create VM Network (Internet)
+  community.libvirt.virt_net:
+    name: "{{ vm_network_internet_name }}"
+    command: define
+    xml: "{{ lookup('template', 'windows-vm-network-internet.xml.j2') }}"
+    uri: "{{ libvirt_uri }}"
+
+- name: Start VM Network (Internet)
+  community.libvirt.virt_net:
+    name: "{{ vm_network_internet_name }}"
+    state: active
+    uri: "{{ libvirt_uri }}"
+
 - name: Create VM
   community.libvirt.virt:
     command: define
@@ -43,6 +60,7 @@
       - ADD_UUID
       - ADD_MAC_ADDRESSES
     uri: "{{ libvirt_uri }}"
+
 - name: Check if VM Volume already exists
   # Ansible has no idempotent way to define libvirt volumes,
   # so instead try to check whether it exists.
@@ -52,22 +70,26 @@
   # Errors should cause the create step to fail anyway
   failed_when: False
   changed_when: result_check_vm_disk.rc != 0
+
 - name: Create VM Volume
   when: result_check_vm_disk is changed
   ansible.builtin.command:
     cmd: virsh --connect "{{ libvirt_uri }}" vol-create --pool "{{ vm_disk_pool }}" --file /dev/stdin
     stdin: "{{ lookup('template', 'windows-vm-volume.xml.j2') }}"
+
 - name: Start VM
   community.libvirt.virt:
     name: "{{ vm_name }}"
     state: running
     uri: "{{ libvirt_uri }}"
+
 - name: Get VM Metadata
   community.libvirt.virt:
     name: "{{ vm_name }}"
     command: get_xml
     uri: "{{ libvirt_uri }}"
   register: created_vm
+
 # VM can have multiple NICs, extract the one we care about so we can match it against the IP address of the guest later
 - name: Extract VM's MAC address
   community.general.xml:
@@ -75,6 +97,7 @@
     xpath: /domain/devices/interface[alias/@name="ua-net-hostnet"]/mac
     content: attribute
   register: vm_network_mac_xml
+
 - set_fact:
     vm_network_mac: "{{ vm_network_mac_xml.matches[0].mac.address }}"
   delegate_to: sble-addc

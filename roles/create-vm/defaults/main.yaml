@@ -10,7 +10,8 @@ vm_disk_format: qcow2
 
 vm_network_hostnet_name: stackable-adds-test-hostnet
 vm_network_hostnet_subnet: 192.168.197.0/24
-vm_network_internet_name: default
+vm_network_internet_name: stackable-adds-test-internet
+vm_network_internet_subnet: 192.168.196.0/24
 
 install_iso_windows: "{{ lookup('first_found', 'target') }}/Windows Server 2022 EVAL.iso"
 

@@ -5,3 +5,4 @@ tmp/
 /target
 roles/create-vm/files/guest-files/spice-guest-tools.exe
 /.direnv
+_work/
