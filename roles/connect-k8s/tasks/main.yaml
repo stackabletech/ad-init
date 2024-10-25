@@ -90,3 +90,28 @@
                   name: secret-operator-ad-passwords
                 userDistinguishedName: CN=Users,DC=sble,DC=test
                 schemaDistinguishedName: CN=Schema,CN=Configuration,DC=sble,DC=test
+
+- name: Create Secret-Operator TLS CA Secret
+  kubernetes.core.k8s:
+    resource_definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        namespace: default
+        name: tls-ad-ca
+        labels:
+          secrets.stackable.tech/class: tls-ad
+      data:
+        ca.crt: "{{ lookup('file', 'target/ca.crt') | b64encode }}"
+- name: Create CA-only TLS SecretClass
+  kubernetes.core.k8s:
+    resource_definition:
+      apiVersion: secrets.stackable.tech/v1alpha1
+      kind: SecretClass
+      metadata:
+        name: tls-ad
+      spec:
+        backend:
+          k8sSearch:
+            searchNamespace:
+              name: default
