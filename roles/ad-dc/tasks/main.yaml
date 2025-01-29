@@ -25,9 +25,7 @@
     enabled: true
     identity: CN=stackable-secret-operator,CN=Users,DC=sble,DC=test
     upn: "{{ secret_operator_principal }}"
-    groups:
-      add:
-        - Domain Admins
+  register: secret_operator_user
 - name: Create Secret-Operator Keytab
   ansible.windows.win_command:
     cmd: ktpass /princ {{ secret_operator_principal }} /out secret-op.kt +rndPass /ptype KRB5_NT_PRINCIPAL /mapuser {{ secret_operator_principal }} /crypto AES256-SHA1
@@ -36,6 +34,36 @@
     src: secret-op.kt
     dest: target/
     flat: true
+
+- name: Create SDP Organizational Unit
+  microsoft.ad.ou:
+    name: SDP
+  register: sdp_ou
+- name: Grant permissions on SDP Organizational Unit
+  ansible.windows.win_shell: |
+    # In theory this could be done declaratively by setting the nTSecurityDescriptor before, but that turned out to be a mess...
+    Import-Module ActiveDirectory
+    $ou_path = "AD:{{ sdp_ou.distinguished_name }}"
+    $secretop = [System.Security.Principal.SecurityIdentifier]::New("{{ secret_operator_user.sid }}")
+    $acl = Get-ACL -Path $ou_path
+    $user_schema_guid = "bf967aba-0de6-11d0-a285-00aa003049e2"
+    $password_reset_right_guid = "00299570-246d-11d0-a768-00aa006e0529"
+    $ou_create_children_rule = [System.DirectoryServices.ActiveDirectoryAccessRule]::New(
+      $secretop,
+      [System.DirectoryServices.ActiveDirectoryRights]::CreateChild,
+      [System.Security.AccessControl.AccessControlType]::Allow,
+      $user_schema_guid,
+      [System.DirectoryServices.ActiveDirectorySecurityInheritance]::None
+    )
+    $ou_reset_passwords_rule = [System.DirectoryServices.ExtendedRightAccessRule]::New(
+      $secretop,
+      [System.Security.AccessControl.AccessControlType]::Allow,
+      $password_reset_right_guid,
+      [System.DirectoryServices.ActiveDirectorySecurityInheritance]::Children
+    )
+    $acl.AddAccessRule($ou_create_children_rule)
+    $acl.AddAccessRule($ou_reset_passwords_rule)
+    Set-ACL -Path $ou_path -AclObject $acl
 
 - name: Install AD Certificate Services
   ansible.windows.win_feature:

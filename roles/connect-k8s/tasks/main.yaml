@@ -88,5 +88,5 @@
                 passwordCacheSecret:
                   namespace: default
                   name: secret-operator-ad-passwords
-                userDistinguishedName: CN=Users,DC=sble,DC=test
+                userDistinguishedName: OU=SDP,DC=sble,DC=test
                 schemaDistinguishedName: CN=Schema,CN=Configuration,DC=sble,DC=test
