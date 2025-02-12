@@ -5,6 +5,10 @@
 let
   python = pkgs.python3;
   beku = pkgs.callPackage (sources."beku.py" + "/beku.nix") { };
+  stackablectl = (import sources.stackable-cockpit {
+    # doesn't build against our nixpkgs because it's missing buildGoApplication.. need to investigate
+    # inherit pkgs;
+  }).cargo.workspaceMembers.stackablectl.build;
   extraAnsibleDeps = pypkgs: [
     # community.libvirt
     pypkgs.libvirt
@@ -19,6 +23,7 @@ pkgs.mkShell rec {
   buildInputs = [
     ansible
     beku
+    stackablectl
     pkgs.kuttl
     pkgs.gettext # for the proper envsubst
   ];
