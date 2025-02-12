@@ -22,5 +22,17 @@
         "type": "tarball",
         "url": "https://github.com/NixOS/nixpkgs/archive/8a3354191c0d7144db9756a74755672387b702ba.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "stackable-cockpit": {
+        "branch": "main",
+        "description": "Home of stackable-cockpit, stackablectl and stackable-cockpitd",
+        "homepage": "https://docs.stackable.tech/management/stable/",
+        "owner": "stackabletech",
+        "repo": "stackable-cockpit",
+        "rev": "70049cae5ff027f7e6f0e69d0503a8bb4b751a75",
+        "sha256": "1hvxhkbbzbgb41h4mygy0fyxm9amavk4f7n8gfzy4nk6khwvlwyg",
+        "type": "tarball",
+        "url": "https://github.com/stackabletech/stackable-cockpit/archive/70049cae5ff027f7e6f0e69d0503a8bb4b751a75.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
