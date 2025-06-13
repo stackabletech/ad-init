@@ -1,6 +1,6 @@
 ---
 dimensions:
-  - name: krb5
+  - name: krb5-testing-tools
     values:
       - 1.21.1
   - name: ad-custom-samaccountname
@@ -10,7 +10,7 @@ dimensions:
 tests:
   - name: kerberos-ad
     dimensions:
-      - krb5
+      - krb5-testing-tools
       - ad-custom-samaccountname
 
 suites: []
