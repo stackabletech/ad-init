@@ -106,7 +106,7 @@
 - name: Create user alice
   microsoft.ad.user:
     name: alice
-    sam_account_name: sam-alice
+    sam_account_name: sam-alice # different than upn prefix (name)
     password: Asdf1234
     enabled: true
     upn: "alice@{{ ansible_facts.domain | upper }}"
@@ -118,10 +118,21 @@
 - name: Create user bob
   microsoft.ad.user:
     name: bob
-    sam_account_name: sam-bob
+    sam_account_name: bob # same as upn prefix (name)
     password: Asdf1234
     enabled: true
     upn: "bob@{{ ansible_facts.domain | upper }}"
+    groups:
+      set:
+        - Domain Users
+
+- name: Create user charlie
+  microsoft.ad.user:
+    name: charlie
+    sam_account_name: charlie
+    password: Asdf1234
+    enabled: true
+    upn: "charlie@CUSTOM.TEST" # custom suffix
     groups:
       set:
         - Domain Users
