@@ -109,7 +109,7 @@
     sam_account_name: sam-alice # different than upn prefix (name)
     password: Asdf1234
     enabled: true
-    upn: "alice@{{ ansible_facts.domain | upper }}"
+    upn: "alice@{{ ansible_facts.domain | lower }}"
     groups:
       set:
         - Domain Users
@@ -132,7 +132,7 @@
     sam_account_name: charlie
     password: Asdf1234
     enabled: true
-    upn: "charlie@CUSTOM.TEST" # custom suffix
+    upn: "charlie@custom.test" # custom suffix
     groups:
       set:
         - Domain Users
